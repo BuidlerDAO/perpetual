@@ -1,0 +1,41 @@
+.Position-buttons-container {
+  margin-top: 1.2rem;
+}
+
+.Position-collateral-amount {
+  margin-left: 0;
+}
+
+.PositionItem-collateral-tooltip {
+  .Tooltip-popup {
+    min-width: 32rem;
+  }
+}
+
+.Position-list-order {
+  .order-error-text {
+    margin-top: 1rem;
+    color: var(--error-red);
+    white-space: normal;
+  }
+}
+
+.order-error-text-msg .Tooltip-handle,
+.position-order-error {
+  text-decoration-color: var(--error-red);
+  color: var(--error-red);
+}
+
+@media (max-width: 1300px) {
+  .Position-collateral-amount {
+    margin-left: 0.8rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .PositionItem-collateral-tooltip {
+    .Tooltip-popup {
+      min-width: 22rem;
+    }
+  }
+}

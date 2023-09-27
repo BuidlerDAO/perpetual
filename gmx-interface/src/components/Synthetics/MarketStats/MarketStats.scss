@@ -1,0 +1,84 @@
+.MarketStats-card {
+  flex: 1;
+  max-width: 71.2rem;
+  margin-right: 1.5rem;
+
+  .Tooltip-popup {
+    min-width: 30rem;
+  }
+}
+
+.MarketStats-card .App-card-row .label {
+  color: #a9a9b0;
+  opacity: 1;
+  min-width: max-content;
+}
+
+.MarketStats-gm-icon {
+  height: 45px;
+  margin-top: -4px;
+  margin-left: -4px;
+}
+
+.App-card-title-mark-icon {
+  position: relative;
+  margin-right: 0.8rem;
+  display: flex;
+}
+
+.App-card-title-mark-icon .selected-network-symbol {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: 1px solid #1e1f37;
+  border-radius: 50%;
+}
+
+.App-card-title-mark {
+  display: flex;
+}
+
+.App-card-title-mark .App-card-title-mark-title {
+  font-size: 1.6rem;
+  line-height: 2.1rem;
+  letter-spacing: 0px;
+  color: #ffffff;
+}
+
+.App-card-title-mark .App-card-title-mark-subtitle {
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+  letter-spacing: 0px;
+  color: #a9a9b0;
+}
+
+.gm-market-name {
+  line-height: 1.457;
+}
+
+@media (max-width: 900px) {
+  .MarketStats-card {
+    margin: 0;
+    margin-bottom: 3.1rem;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .MarketStats-card {
+    .Tooltip-popup {
+      min-width: 22rem;
+    }
+  }
+}
+
+@media (max-width: 380px) {
+  .Gm-stats-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .Gm-stats-title .subtext {
+    margin-left: 0;
+  }
+}
