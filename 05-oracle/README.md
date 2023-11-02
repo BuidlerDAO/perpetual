@@ -111,9 +111,9 @@ final price 使用到的场景如下：
 <img src=./pictures/getPrice.png width=50% />    
 查看 getMaxPrice 和 getMinPrice  的具体实现，可以发现他们之间的差别在于调用 IVaultPriceFeed(priceFeed).getPrice 传入的第二个参数为 true 或 false 的区别，这会导致返回的 final price 的不同  
 - buyUSDG
-在这个接口里面，调用的是 getMinPrice，这样用户的 input token 换算成 USDG 就会最小化，防止出现 “chainLink price” 或 **“**聚合的中心化交易所价格”出现较大价格波动时，造成用户套利的情况
+在这个接口里面，调用的是 getMinPrice，这样用户的 input token 换算成 USDG 就会最小化，防止出现 "chainLink price" 或 "聚合的中心化交易所价格" 出现较大价格波动时，造成用户套利的情况
 - sellUSDG
-同理，在这个接口里面，调用的是 getMaxPrice，这样用户的 USDG 换算成 output token 时就会最小化，防止出现 “chainLink price” 或 **“**聚合的中心化交易所价格”出现较大价格波动时，造成用户套利的情况  
+同理，在这个接口里面，调用的是 getMaxPrice，这样用户的 USDG 换算成 output token 时就会最小化，防止出现 "chainLink price" 或 "聚合的中心化交易所价格" 出现较大价格波动时，造成用户套利的情况  
 - swap 
 对于 input token 调用 getMinPrice， 对于 output toke 调用的是 getMaxPrice，最小化用户可以获取的 output token amount
 - increasePosition
