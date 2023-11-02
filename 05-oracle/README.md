@@ -1,8 +1,5 @@
 # 预言机
 MX 官方文档上描述它价格数据来源于两部分  
-<a>
-    <img align="top" src="https://drive.google.com/file/d/1nHz6okeKvecGvoNreF3gevlCzf7TrbUd/view?usp=sharing" />
-</a>
 - 一个是 Chainlink Oracles
 - 另一个是 聚合的中心化交易所价格   
 
@@ -128,3 +125,62 @@ final price 使用到的场景如下：
 
 ## final price 的具体实现
 final price 的整体流程如下  
+<img src=./pictures/finalPriceFlow.png width=50% />   
+现在我们继续看下 IVaultPriceFeed(priceFeed).getPrice 中的 final price 是如何返回的   
+<img src=./pictures/ChoosePricing.png width=50% />  
+
+查看 getPrice 接口的实现，可知其内部的主体是 getPriceV2 和  getPriceV1。当前 gmx v1 版本中，useV2Pricing 为 false, 所以 getPrice 中调用的主体是 getPriceV1     
+<img src=./pictures/VaultPriceFeed.png width=50% />   
+
+### getPriceV1 实现  
+在 getPriceV1 的实现中，主要调用如下三个接口获取价格   
+- getPrimaryPrice:  Chainlink oracle 的价格，实际就是调用 priceFeed.latestAnswer 接口获取最新的价格数据 （ 因为目前 priceSampleSpace 设置为 1，所以只会走 i == 0 的分支 ） 
+ <img src=./pictures/getPrimaryPrice.png width=50% /> 
+- getAmmPrice： 获取 Pancake 交易所的价格。目前在 EVM compatible 的链，如 Arbitrum 的链，isAmmEnabled 参数为 false, 所以直接忽略 ammPrice   
+- getSecondaryPrice： 这个就是 **“**聚合的中心化交易所价格”，其中 secondaryPriceFeed 就是 FastPriceFeed 合约的地址   
+<img src=./pictures/getSecondaryPrice.png width=50% />    
+[FastPriceFeed address](https://arbiscan.io/address/0x11d62807dae812a0f1571243460bf94325f43bb7#code)      
+
+继续查看 FastPriceFeed 的 getPrice 实现   
+```
+function getPrice(address _token, uint256 _refPrice, bool _maximise) external override view returns (uint256) {
+        if (block.timestamp > lastUpdatedAt.add(maxPriceUpdateDelay)) {
+            if (_maximise) {
+                return _refPrice.mul(BASIS_POINTS_DIVISOR.add(spreadBasisPointsIfChainError)).div(BASIS_POINTS_DIVISOR);
+            }
+
+            return _refPrice.mul(BASIS_POINTS_DIVISOR.sub(spreadBasisPointsIfChainError)).div(BASIS_POINTS_DIVISOR);
+        }
+
+        if (block.timestamp > lastUpdatedAt.add(priceDuration)) {
+            if (_maximise) {
+                return _refPrice.mul(BASIS_POINTS_DIVISOR.add(spreadBasisPointsIfInactive)).div(BASIS_POINTS_DIVISOR);
+            }
+
+            return _refPrice.mul(BASIS_POINTS_DIVISOR.sub(spreadBasisPointsIfInactive)).div(BASIS_POINTS_DIVISOR);
+        }
+
+        uint256 fastPrice = prices[_token];
+        if (fastPrice == 0) { return _refPrice; }
+
+        uint256 diffBasisPoints = _refPrice > fastPrice ? _refPrice.sub(fastPrice) : fastPrice.sub(_refPrice);
+        diffBasisPoints = diffBasisPoints.mul(BASIS_POINTS_DIVISOR).div(_refPrice);
+
+        // create a spread between the _refPrice and the fastPrice if the maxDeviationBasisPoints is exceeded
+        // or if watchers have flagged an issue with the fast price
+        bool hasSpread = !favorFastPrice(_token) || diffBasisPoints > maxDeviationBasisPoints;
+
+        if (hasSpread) {
+            // return the higher of the two prices
+            if (_maximise) {
+                return _refPrice > fastPrice ? _refPrice : fastPrice;
+            }
+
+            // return the lower of the two prices
+            return _refPrice < fastPrice ? _refPrice : fastPrice;
+        }
+
+        return fastPrice;
+    }
+
+```
