@@ -1,5 +1,5 @@
 # 预言机
-MX 官方文档上描述它价格数据来源于两部分  
+GMX 官方文档上描述它价格数据来源于两部分  
 - 一个是 Chainlink Oracles
 - 另一个是 聚合的中心化交易所价格   
 
@@ -11,7 +11,7 @@ MX 官方文档上描述它价格数据来源于两部分
 ## 预言机合约
 查看 GMX 合约仓库，可以看到 GMX 主要使用两个合约获取这两个数据源的价格数据
 
-- FastPriceFeed**:  对应于 “**聚合的中心化交易所价格”
+- FastPriceFeed:  对应于 "聚合的中心化交易所价格"
 - PriceFeed:  对应于 chainlink 数据源
 
 [gmx oracle contracts](https://github.com/gmx-io/gmx-contracts/tree/master/contracts/oracle)   
@@ -93,17 +93,23 @@ final price = mix(chainLink price, “聚合的中心化交易所价格”)
 final price 使用到的场景如下：   
 - 提供流动性，对应于 Vault 合约中的 buyUSDG    
 <img src=./pictures/buyUSDG.png width=50% />    
+
 - 移除流动性，对应于 Vault 合约中的 sellUSDG    
 <img src=./pictures/sellUSDG.png width=50% />  
-<img src=./pictures/getRedemptionAmount.png width=50% />   
+<img src=./pictures/getRedemptionAmount.png width=50% />  
+
 - swap  
 <img src=./pictures/swap.png width=50% />      
+
 - 开仓，对应 Vault 合约中的 increasePosition   
-<img src=./pictures/increasePosition.png width=50% />     
+<img src=./pictures/increasePosition.png width=50% />   
+
 - 平仓/减仓，对应 Vault 合约中的 decreasePosition   
 <img src=./pictures/decreasePosition.png width=50% />   
+
 - 清算，对应 Vault 合约中的 liquidatePosition  
 <img src=./pictures/liquidatePosition.png width=50% />   
+
 
 
 ## getMinPrice/getMaxPrice
