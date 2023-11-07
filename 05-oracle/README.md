@@ -1,5 +1,5 @@
 # 预言机
-MX 官方文档上描述它价格数据来源于两部分  
+GMX 官方文档上描述它价格数据来源于两部分  
 - 一个是 Chainlink Oracles
 - 另一个是 聚合的中心化交易所价格   
 
@@ -11,7 +11,7 @@ MX 官方文档上描述它价格数据来源于两部分
 ## 预言机合约
 查看 GMX 合约仓库，可以看到 GMX 主要使用两个合约获取这两个数据源的价格数据
 
-- FastPriceFeed**:  对应于 “**聚合的中心化交易所价格”
+- FastPriceFeed:  对应于 "聚合的中心化交易所价格"
 - PriceFeed:  对应于 chainlink 数据源
 
 [gmx oracle contracts](https://github.com/gmx-io/gmx-contracts/tree/master/contracts/oracle)   
@@ -93,27 +93,34 @@ final price = mix(chainLink price, “聚合的中心化交易所价格”)
 final price 使用到的场景如下：   
 - 提供流动性，对应于 Vault 合约中的 buyUSDG    
 <img src=./pictures/buyUSDG.png width=50% />    
+
 - 移除流动性，对应于 Vault 合约中的 sellUSDG    
 <img src=./pictures/sellUSDG.png width=50% />  
-<img src=./pictures/getRedemptionAmount.png width=50% />   
+<img src=./pictures/getRedemptionAmount.png width=50% />  
+
 - swap  
 <img src=./pictures/swap.png width=50% />      
+
 - 开仓，对应 Vault 合约中的 increasePosition   
-<img src=./pictures/increasePosition.png width=50% />     
+<img src=./pictures/increasePosition.png width=50% />   
+
 - 平仓/减仓，对应 Vault 合约中的 decreasePosition   
 <img src=./pictures/decreasePosition.png width=50% />   
+
 - 清算，对应 Vault 合约中的 liquidatePosition  
 <img src=./pictures/liquidatePosition.png width=50% />   
 
 
+
 ## getMinPrice/getMaxPrice
 从 buyUSDG、sellUSDG、swap、increasePosition、decreasePosition 接口中可以看到，主要就是调用 getMaxPrice 和 getMinPrice 这两个接口获取 final price。  
-<img src=./pictures/getPrice.png width=50% />    
+<img src=./pictures/getPrice.png width=50% />  
+  
 查看 getMaxPrice 和 getMinPrice  的具体实现，可以发现他们之间的差别在于调用 IVaultPriceFeed(priceFeed).getPrice 传入的第二个参数为 true 或 false 的区别，这会导致返回的 final price 的不同  
 - buyUSDG
-在这个接口里面，调用的是 getMinPrice，这样用户的 input token 换算成 USDG 就会最小化，防止出现 “chainLink price” 或 **“**聚合的中心化交易所价格”出现较大价格波动时，造成用户套利的情况
+在这个接口里面，调用的是 getMinPrice，这样用户的 input token 换算成 USDG 就会最小化，防止出现 "chainLink price" 或 "聚合的中心化交易所价格" 出现较大价格波动时，造成用户套利的情况
 - sellUSDG
-同理，在这个接口里面，调用的是 getMaxPrice，这样用户的 USDG 换算成 output token 时就会最小化，防止出现 “chainLink price” 或 **“**聚合的中心化交易所价格”出现较大价格波动时，造成用户套利的情况  
+同理，在这个接口里面，调用的是 getMaxPrice，这样用户的 USDG 换算成 output token 时就会最小化，防止出现 "chainLink price" 或 "聚合的中心化交易所价格" 出现较大价格波动时，造成用户套利的情况  
 - swap 
 对于 input token 调用 getMinPrice， 对于 output toke 调用的是 getMaxPrice，最小化用户可以获取的 output token amount
 - increasePosition
@@ -136,9 +143,11 @@ final price 的整体流程如下
 在 getPriceV1 的实现中，主要调用如下三个接口获取价格   
 - getPrimaryPrice:  Chainlink oracle 的价格，实际就是调用 priceFeed.latestAnswer 接口获取最新的价格数据 （ 因为目前 priceSampleSpace 设置为 1，所以只会走 i == 0 的分支 ） 
  <img src=./pictures/getPrimaryPrice.png width=50% /> 
+
 - getAmmPrice： 获取 Pancake 交易所的价格。目前在 EVM compatible 的链，如 Arbitrum 的链，isAmmEnabled 参数为 false, 所以直接忽略 ammPrice   
 - getSecondaryPrice： 这个就是 **“**聚合的中心化交易所价格”，其中 secondaryPriceFeed 就是 FastPriceFeed 合约的地址   
 <img src=./pictures/getSecondaryPrice.png width=50% />    
+
 [FastPriceFeed address](https://arbiscan.io/address/0x11d62807dae812a0f1571243460bf94325f43bb7#code)      
 
 继续查看 FastPriceFeed 的 getPrice 实现   
