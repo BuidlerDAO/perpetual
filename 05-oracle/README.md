@@ -114,7 +114,8 @@ final price 使用到的场景如下：
 
 ## getMinPrice/getMaxPrice
 从 buyUSDG、sellUSDG、swap、increasePosition、decreasePosition 接口中可以看到，主要就是调用 getMaxPrice 和 getMinPrice 这两个接口获取 final price。  
-<img src=./pictures/getPrice.png width=50% />    
+<img src=./pictures/getPrice.png width=50% />  
+  
 查看 getMaxPrice 和 getMinPrice  的具体实现，可以发现他们之间的差别在于调用 IVaultPriceFeed(priceFeed).getPrice 传入的第二个参数为 true 或 false 的区别，这会导致返回的 final price 的不同  
 - buyUSDG
 在这个接口里面，调用的是 getMinPrice，这样用户的 input token 换算成 USDG 就会最小化，防止出现 "chainLink price" 或 "聚合的中心化交易所价格" 出现较大价格波动时，造成用户套利的情况
@@ -142,9 +143,11 @@ final price 的整体流程如下
 在 getPriceV1 的实现中，主要调用如下三个接口获取价格   
 - getPrimaryPrice:  Chainlink oracle 的价格，实际就是调用 priceFeed.latestAnswer 接口获取最新的价格数据 （ 因为目前 priceSampleSpace 设置为 1，所以只会走 i == 0 的分支 ） 
  <img src=./pictures/getPrimaryPrice.png width=50% /> 
+
 - getAmmPrice： 获取 Pancake 交易所的价格。目前在 EVM compatible 的链，如 Arbitrum 的链，isAmmEnabled 参数为 false, 所以直接忽略 ammPrice   
 - getSecondaryPrice： 这个就是 **“**聚合的中心化交易所价格”，其中 secondaryPriceFeed 就是 FastPriceFeed 合约的地址   
 <img src=./pictures/getSecondaryPrice.png width=50% />    
+
 [FastPriceFeed address](https://arbiscan.io/address/0x11d62807dae812a0f1571243460bf94325f43bb7#code)      
 
 继续查看 FastPriceFeed 的 getPrice 实现   
