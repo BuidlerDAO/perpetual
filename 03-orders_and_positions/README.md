@@ -62,7 +62,18 @@ Transaction会根据会根据机器人的提交参数，选择调用市价单或
 
 市价单或者限价单合约会调用Vault合约来执行加减仓操作。
 
+| 合约名称 | 合约地址 |
+|-|-|  
+| 市价单合约 | https://arbiscan.io/address/0xb87a436b93ffe9d75c5cfa7bacfff96430b09868 |
+| 限价单合约 | https://arbiscan.io/address/0x09f77e8a13de9a35a7231028187e9fd5db8a2acb |
+| Vault合约 | https://arbiscan.io/address/0x489ee077994b6658eafa855c308275ead8097c4a |
 
+| 操作名称 | 交易Hash |
+|-|-|
+| 用户发起市价单加仓交易 | https://arbiscan.io/tx/0x3230e702a44c6029790d279d0a11e87f89474a9fec251aa0b7f5070aab38104b |  
+| 用户发起市价单减仓交易 | https://arbiscan.io/tx/0x7d359cb6a1744f87c6b4cc1ff93a8b8ee9fc6bbfa73227e8c7d8b59214a8a368 |
+| 执行机器人执行市价单 | https://arbiscan.io/tx/0x5f5a3a90ed30b099ad456f14e7ea580cea3f25cd4bdf2d491ae5e18eadd87ff2 |
+| 执行机器人执行限价单 | https://arbiscan.io/tx/0x3cc5b3bd1fc5efeba0cbf1cfc5752773d9476c15b2fb8cc3bb5dc02b8480b5af |
 
 
 #### 代码分析：
